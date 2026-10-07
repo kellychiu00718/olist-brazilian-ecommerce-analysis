@@ -1,0 +1,94 @@
+== A. orders with review: 94443
+median days per stage: {'d_approval': 0.01, 'd_to_carrier': 1.85, 'd_in_transit': 7.1} | median total 10.26 | median promised 23.23
+                mean  count  pct_1_2
+promise_bucket                      
+7+ days early   4.32  69726     8.96
+0-7 days early  4.20  17090    10.26
+1-3 days late   3.76   2618    19.17
+4-7 days late   2.32   1766    61.27
+7+ days late    1.73   3243    78.48
+score by speed x late
+               On time or early  Late
+speed_bucket                        
+<7d                       4.42  4.30
+7-14d                     4.32  3.64
+14-21d                    4.18  3.36
+21d+                      3.92  2.30 
+n
+               On time or early  Late
+speed_bucket                        
+<7d                      25055   220
+7-14d                    38935   513
+14-21d                   16625   835
+21d+                      6201  6059
+OLS score ~ d_total + late (robust SE):
+ ==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+Intercept      4.5648      0.010    468.361      0.000       4.546       4.584
+d_total       -0.0248      0.001    -29.553      0.000      -0.026      -0.023
+late          -1.2221      0.024    -50.087      0.000      -1.270      -1.174
+==============================================================================
+Spearman score vs d_total: SignificanceResult(statistic=-0.23579464734282682, pvalue=0.0)
+Spearman score vs d_late: SignificanceResult(statistic=-0.1779191055787681, pvalue=0.0)
+on-time orders only, Spearman score vs d_total: SignificanceResult(statistic=-0.12362803078968047, pvalue=9.832211543751609e-293)
+                orders  promise_today  promise_same_late  promise_95
+customer_state                                                      
+SP               39677           18.9               17.0        20.0
+RJ               12072           24.6               31.7        38.2
+MG               11117           23.6               21.4        24.4
+RS                5242           28.0               27.9        32.9
+PR                4821           24.1               21.3        24.7
+SC                3465           25.1               27.3        30.9
+BA                3183           29.0               33.1        36.8
+DF                2031           24.1               22.9        26.0
+ES                1942           25.0               26.9        30.4
+GO                1910           27.0               26.0        29.2
+PE                1559           31.0               33.6        39.3
+CE                1253           31.3               38.1        44.9
+PA                 923           36.1               42.1        46.1
+MT                 864           31.2               29.0        33.7
+MA                 699           30.2               36.0        40.9
+MS                 694           25.9               26.2        30.5
+PB                 504           32.6               35.3        39.7
+
+== B. items: 111119
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+Intercept      0.2353      0.009     26.357      0.000       0.218       0.253
+ln_d           0.1945      0.001    219.518      0.000       0.193       0.196
+ln_w           0.1527      0.001    123.327      0.000       0.150       0.155
+ln_p           0.1056      0.002     69.604      0.000       0.103       0.109
+==============================================================================
+R2 0.512
+         items  median_freight  median_ratio
+bucket                                      
+<100     20763           9.340         0.177
+100-500  42945          15.260         0.223
+500-1k   29831          17.770         0.253
+1k-2k    11202          22.770         0.292
+2k+       6378          28.905         0.349
+HUB WHAT-IF (assumption, not observed): 10,003 items beyond 1,500 km; actual freight R$ 359,025; if they paid the 1,000 km rate: saving R$ 48,003 (13% of far freight, 2.2% of all freight); elasticity of freight to distance = 0.19
+share of items beyond 1,500 km: 9.0 % ; origin states: {'SP': 0.66, 'PR': 0.07, 'MG': 0.06}
+
+== C
+                 leads  closed  avg_orders  ...  orders_per_lead  opl_lo  opl_hi
+origin                                     ...                                 
+unknown          1159     193       6.679  ...            1.112   0.483   2.268
+paid_search      1586     195       6.379  ...            0.784   0.466   1.262
+organic_search   2296     271       4.454  ...            0.526   0.362   0.719
+direct_traffic    499      56       3.429  ...            0.385   0.227   0.575
+social           1350      75       5.213  ...            0.290   0.143   0.484
+referral          284      24       2.875  ...            0.243   0.079   0.474
+email             493      15       1.467  ...            0.045   0.010   0.097
+
+[7 rows x 9 columns]
+chi2 conversion differs across origins: p = 3.0961535354297734e-25
+
+== D. categories tested: 35 | median rho desc: 0.02 | significant (p<.05): 11 (chance alone would give about 1.8 )
+median rho name: 0.013 | significant: 9
+desc_len coef 4e-05 p 0.0
+name_len coef 0.00251 p 0.0
+photos coef 0.01791 p 0.0
+np.log(avg_price) coef -0.08681 p 0.0

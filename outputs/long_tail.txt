@@ -1,0 +1,6 @@
+reviewed orders: 94443
+median days to deliver: 10.3 | median days promised: 23.2
+arrive 7+ days before the promised date: 73.8%
+late orders: 7627 (8.1%)
+late orders that took 21+ days: 79.4%
+orders that took 21+ days: 12260; of those, late: 49.4%

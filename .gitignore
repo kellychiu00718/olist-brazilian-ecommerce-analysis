@@ -1,0 +1,8 @@
+# Raw data (CC BY-NC-SA, do not republish) and exports derived at order level
+orders/
+marketing_funnel/
+data/
+.DS_Store
+.env
+*.db
+__pycache__/
