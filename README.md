@@ -12,7 +12,7 @@ Olist is a marketplace where sellers ship to buyers across Brazil. I looked at t
 ## My role
 
 -   I inspected the datasets and formulated the questions that deserved to be looked into and analyzed.
--   I wrote the query myself and utilized Claude Code for debugging. Overall, I reviewed the results myself.
+-   I wrote the query myself and used Claude Code for debugging. I reviewed the results myself.
 -   Dashboard: [Tableau Public](https://public.tableau.com/views/LateordersgetlowerratingsonBrazilianE-commerceOlist_Whatstrategiesshouldbeapplied/1_1)
 
 ## Data
@@ -30,7 +30,7 @@ Olist is a marketplace where sellers ship to buyers across Brazil. I looked at t
 ## Process
 
 1.  **Extract.** Loaded the CSVs into a `olist` schema (`sql/00_create_tables.sql`, `sql/00_create_funnel_tables.sql`). Row counts matched the source.
-2.  **Clean.** 96,478 delivered orders; 1,396 were dropped because a date was missing (24) or the order of events was impossible (carrier pickup before payment approval: 1,350; delivery before pickup: 23; some overlap). 95,082 remained. Orders with several reviews (547) keep only the latest. Customers with no map coordinates (278) and sellers with none (7) are excluded from the distance analysis.
+2.  **Clean.** 96,478 delivered orders. 1,396 were dropped because a date was missing (24) or the order of events was impossible (carrier pickup before payment approval: 1,350; delivery before pickup: 23; some overlap). 95,082 remained. Orders with several reviews (547) keep only the latest. Customers with no map coordinates (278) and sellers with none (7) are left out of the distance analysis.
 3.  **Explore and analyze.** Stage durations, review score by gap to the promised date, freight share by distance, funnel conversion by channel, and within-category correlations.
 4.  **Visualize.** Ten figures in `figures/`, aggregate tables in `outputs/tableau/` for the dashboard.
 
@@ -40,7 +40,7 @@ Olist is a marketplace where sellers ship to buyers across Brazil. I looked at t
 2.  **Promises are padded on average; the problem is the long tail.** The median order arrives in 10.3 days against 23.2 promised, and 73.8% arrive 7+ days early. Still, 79.4% of the late orders took 21+ days, and about half (49.4%) of all 21+ day deliveries were late. The fix is for the slow routes, not a shorter promise everywhere (`outputs/long_tail.txt`).
 3.  **The promise is uneven.** If each state's promised time were set so that the share of late orders stayed at 8.2%, Rio de Janeiro's promise would move from 24.6 to 31.7 days and São Paulo's from 18.9 to 17.0 (`figures/a4`). This is a what-if on historical data, not a tested change.
 4.  **Freight takes a larger share of price on long routes.** The median freight-to-price ratio rises from 17.7% for routes under 100 km to 34.9% beyond 2,000 km. In a log model, freight rises about 0.19% per 1% of distance (R² 0.51).
-5.  **A hub is worth testing.** 10,003 items travelled more than 1,500 km. If they paid the 1,000 km rate, freight would drop by about R\$ 48,003: 13% of their freight and 2.2% of all freight. Where to pilot: Bahia, Pernambuco, Ceará, Pará and Mato Grosso pay about 29–35% of the item price in freight and still order 1,000+ items each (my thresholds: freight share of 28% or more, 1,000+ items). About 70% of items to every state come from São Paulo sellers, and these states have very few local sellers (Bahia 19, Pernambuco 9, Ceará 12, Pará 1, Mato Grosso 4). Order counts are not purchase rates, and shoppers who gave up because of freight are not in the data, so this is a place to test, not proof of demand.
+5.  **A hub is worth testing.** 10,003 items travelled more than 1,500 km. If they paid the 1,000 km rate, freight would drop by about R\$ 48,003. That is 13% of their freight and 2.2% of all freight. Where to pilot: Bahia, Pernambuco, Ceará, Pará and Mato Grosso. They pay about 29–35% of the item price in freight and still order 1,000+ items each (my thresholds: freight share of 28% or more, 1,000+ items). About 70% of items to every state come from São Paulo sellers. These states have very few local sellers (Bahia 19, Pernambuco 9, Ceará 12, Pará 1, Mato Grosso 4). Order counts are not purchase rates, and shoppers who gave up because of freight are not in the data. So this is a place to test, not proof of demand.
 
 ## Background
 
