@@ -9,10 +9,10 @@ Olist is a marketplace where sellers ship to buyers across Brazil. I looked at t
 1.  Do low review scores come from slow delivery, or from breaking the delivery promise?
 2.  Where is freight a large share of the price but orders still high, so that a small regional hub could be piloted?
 
-## My role
+## What I did
 
--   I inspected the datasets and formulated the questions that deserved to be looked into and analyzed.
--   I wrote the query myself and used Claude Code for debugging. I reviewed the results myself.
+This was a solo project. I went through the tables, chose the two questions, wrote every query and checked every result. I also set the thresholds for the hub screen (freight at 28% or more of the item price, 1,000+ items). Claude Code helped me debug.
+
 -   Dashboard: [Tableau Public](https://public.tableau.com/views/LateordersgetlowerratingsonBrazilianE-commerceOlist_Whatstrategiesshouldbeapplied/1_1)
 
 ## Data
@@ -36,11 +36,11 @@ Olist is a marketplace where sellers ship to buyers across Brazil. I looked at t
 
 ## Key insights
 
-1.  **Breaking the promise matters more than speed.** Late orders (8.1% of reviewed orders) score 2.56 vs 4.29, and 54.1% of them get 1–2 stars vs 9.2%. Orders 7+ days early average 4.32; orders 7+ days late average 1.73. A 21+ day delivery that arrives on time still scores 3.92 (`figures/a2`, `a3`).
-2.  **Promises are padded on average; the problem is the long tail.** The median order arrives in 10.3 days against 23.2 promised, and 73.8% arrive 7+ days early. Still, 79.4% of the late orders took 21+ days, and about half (49.4%) of all 21+ day deliveries were late. The fix is for the slow routes, not a shorter promise everywhere (`outputs/long_tail.txt`).
-3.  **The promise is uneven.** If each state's promised time were set so that the share of late orders stayed at 8.2%, Rio de Janeiro's promise would move from 24.6 to 31.7 days and São Paulo's from 18.9 to 17.0 (`figures/a4`). This is a what-if on historical data, not a tested change.
+1.  **Missing the promised date hurts reviews more than a slow delivery.** Late orders (8.1% of reviewed orders) score 2.56 vs 4.29, and 54.1% of them get 1–2 stars vs 9.2%. Orders 7+ days early average 4.32; orders 7+ days late average 1.73. A 21+ day delivery that arrives on time still scores 3.92 (`figures/a2`, `a3`).
+2.  **Most promises are padded. The late orders sit in the long tail.** The median order arrives in 10.3 days against 23.2 promised, and 73.8% arrive 7+ days early. Still, 79.4% of the late orders took 21+ days, and about half (49.4%) of all 21+ day deliveries were late. So the slow routes are where to start (`outputs/long_tail.txt`).
+3.  **The promise is uneven.** If each state's promised time were set so that the share of late orders stayed at 8.2%, Rio de Janeiro's promise would move from 24.6 to 31.7 days and São Paulo's from 18.9 to 17.0 (`figures/a4`). This is a what-if on past data; I have not tested it.
 4.  **Freight takes a larger share of price on long routes.** The median freight-to-price ratio rises from 17.7% for routes under 100 km to 34.9% beyond 2,000 km. In a log model, freight rises about 0.19% per 1% of distance (R² 0.51).
-5.  **A hub is worth testing.** 10,003 items travelled more than 1,500 km. If they paid the 1,000 km rate, freight would drop by about R\$ 48,003. That is 13% of their freight and 2.2% of all freight. Where to pilot: Bahia, Pernambuco, Ceará, Pará and Mato Grosso. They pay about 29–35% of the item price in freight and still order 1,000+ items each (my thresholds: freight share of 28% or more, 1,000+ items). About 70% of items to every state come from São Paulo sellers. These states have very few local sellers (Bahia 19, Pernambuco 9, Ceará 12, Pará 1, Mato Grosso 4). Order counts are not purchase rates, and shoppers who gave up because of freight are not in the data. So this is a place to test, not proof of demand.
+5.  **A hub is worth testing.** 10,003 items travelled more than 1,500 km. If they paid the 1,000 km rate, freight would drop by about R\$ 48,003. That is 13% of their freight and 2.2% of all freight. Where to pilot: Bahia, Pernambuco, Ceará, Pará and Mato Grosso. They pay about 29–35% of the item price in freight and still order 1,000+ items each (my thresholds: freight share of 28% or more, 1,000+ items). About 70% of items to every state come from São Paulo sellers. These states have very few local sellers (Bahia 19, Pernambuco 9, Ceará 12, Pará 1, Mato Grosso 4). Order counts are not purchase rates, and shoppers who gave up because of freight are not in the data. These states are worth a test, but the data cannot prove demand.
 
 ## Background
 
@@ -49,7 +49,7 @@ Olist is a marketplace where sellers ship to buyers across Brazil. I looked at t
 
 ## Business impact / recommendation
 
-This is a public dataset, so there is no measured business result. What the analysis supports:
+This is a public dataset, so there is no measured business result. The analysis supports two actions.
 
 -   **Recalibrate delivery promises by state**, starting with states where the promise is shorter than the delivery time at the same late rate (Rio de Janeiro, Ceará, Pará). *How to measure:* an A/B test of new estimated dates on a subset of orders; track share late, review score and repeat orders.
 -   **Pilot a regional hub only if its cost is well under the modeled saving.** The R\$ 48,003 figure is a ceiling under my assumptions, for this dataset's period.
@@ -57,8 +57,9 @@ This is a public dataset, so there is no measured business result. What the anal
 ## Challenges & learnings
 
 -   Joining reviews to orders silently duplicated orders until I reduced them to one review per order.
--   Applying SQL and Tableau to real datasets and drawing insights from them is not easy.
--   To gain insights from large amounts of data, the most important thing I've learned is to inspect the relations in each table, then choose the most interesting pattern and drill it down.
+-   Applying SQL and Tableau to a real dataset and drawing insights from it was harder than I expected.
+-   With this much data, I learned to map how the tables connect first, then pick one pattern and dig into it.
+-   Each recommendation comes with a way to measure it, because a public dataset cannot tell me whether the change would work.
 
 ## How to reproduce
 
