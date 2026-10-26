@@ -1,6 +1,6 @@
 # Late Orders Get Lower Ratings On Brazilian E-commerce (Olist). What Strategies Should Be Applied?
 
-**Olist E-commerce Order Data Analysis:<br />**I used PostgreSQL, Python, and Tableau to analyze Olist's public e-commerce data from Brazil, focusing on three aspects: **the promised or estimated arrival time, the total time required for delivery, and the freight charges paid by customers buying across state lines**.<br />The aim was to break down improvements to the delivery experience into questions that could be analyzed, then develop recommendations for marketplace operations.
+**Olist E-commerce Order Data Analysis:**<br />I used PostgreSQL, Python, and Tableau to analyze Olist's public e-commerce data from Brazil, focusing on three aspects: **the promised or estimated arrival time, the total time required for delivery, and the freight charges paid by customers buying across state lines**.<br />The aim was to break down improvements to the delivery experience into questions that could be analyzed, then develop recommendations for marketplace operations.
 
 > **Initial observation**: Across 94,443 reviewed orders, late arrivals averaged 2.56/5, compared with 4.29/5 for on-time or early arrivals.
 
@@ -30,7 +30,7 @@ The main source was the [Olist Brazilian E-Commerce Public Dataset](https://www.
 | Destination-state freight screening | 111,553 order-item records | Excluded canceled and unavailable orders; retained records with calculable distance and positive price |
 | Freight model and distance groups | 111,119 order-item records | Further restricted the sample to positive distance, weight, and freight |
 
-**Metric definitions:<br />**Late = arrival later than the originally estimated time.<br />Freight-to-price ratio = freight / item price.<br />Distance = the estimated straight-line distance between the mean coordinates of the seller's and buyer's postal-code prefixes, rather than the actual shipping route.
+**Metric definitions:**<br />Late = arrival later than the originally estimated time.<br />Freight-to-price ratio = freight / item price.<br />Distance = the estimated straight-line distance between the mean coordinates of the seller's and buyer's postal-code prefixes, rather than the actual shipping route.
 
 ## 4. Tools and Outputs
 
