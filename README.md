@@ -1,17 +1,16 @@
 # Late Orders Get Lower Ratings On Brazilian E-commerce (Olist). What Strategies Should Be Applied?
 
-**Olist E-commerce Order Data Analysis:**<br />I used PostgreSQL, Python, and Tableau to analyze Olist's public e-commerce data from Brazil, focusing on three aspects: **the promised or estimated arrival time, the total time required for delivery, and the freight charges paid by customers buying across state lines**.<br />The aim was to break down improvements to the delivery experience into questions that could be analyzed, then develop recommendations for marketplace operations.
+**Olist E-commerce Order Data Analysis:**<br>I used PostgreSQL, Python, and Tableau to analyze Olist's public e-commerce data from Brazil, focusing on two questions:<br>1. **How do delivery speed and the estimated arrival time each relate to buyer ratings?<br>2. Which states have relatively high freight charges but still a substantial volume of item purchases, making them a priority for assessing logistics improvements?**<br>The aim was to **improve the delivery experience** and develop recommendations for marketplace operations.
 
 > **Initial observation**: Across 94,443 reviewed orders, late arrivals averaged 2.56/5, compared with 4.29/5 for on-time or early arrivals.
 
 [GitHub: code and analysis](https://github.com/kellychiu00718/olist-brazilian-ecommerce-analysis) · [Tableau Public dashboard](https://public.tableau.com/views/LateordersgetlowerratingsonBrazilianE-commerceOlist_Whatstrategiesshouldbeapplied/1_1)
 
-
 ## 1. Problem Definition
 
-**How long customers wait between placing an order and receiving it** and **whether an item arrives within the time promised or estimated by the seller** involve different customer expectations. Looking only at average delivery time, without considering what the marketplace or seller originally told customers to expect, may overlook an important part of the relationship between low ratings and delivery speed.<br />I therefore wanted to understand: **How do low review scores relate to 1. delivery speed** and **2. arrival after the promised or estimated time?**
+**How long customers wait between placing an order and receiving it** and **whether an item arrives within the time promised or estimated by the seller** involve different customer expectations. Looking only at average delivery time, without considering what the marketplace or seller originally told customers to expect, may overlook an important part of the relationship between low ratings and delivery speed.<br />I therefore wanted to understand: **How do low review scores relate to 1. delivery speed** and **2. arrival after the promised time?**
 
-The other question I wanted to explore was **freight**. Does freight increase relative to the item price as distance grows? Which states still have a substantial volume of purchases despite a relatively high freight burden, making them worth assessing for a small logistics-hub pilot?
+The other question I wanted to explore was **freight burden and priorities for logistics improvements**. Which states have relatively high freight charges compared with item prices, yet still a substantial volume of item purchases? Where are the items purchased in these states supplied from, and is it worth assessing small logistics hubs?
 
 Across both questions, the aim was to **improve the marketplace's delivery experience and benefit both the marketplace and its sellers**.
 
@@ -22,6 +21,8 @@ This was a personal analysis project, primarily intended to help me practice wri
 ## 3. Data
 
 The main source was the [Olist Brazilian E-Commerce Public Dataset](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce), covering orders, reviews, products, sellers, and geolocation from 2016–2018.
+
+The freight analysis uses one record per item within an order. An order containing several items therefore contributes several order-item records. For example, an order containing a shirt and a cup counts as one order and two order-item records.
 
 | Analytical dataset | Size | Preparation |
 | --- | --- | --- |
@@ -43,7 +44,7 @@ The main source was the [Olist Brazilian E-Commerce Public Dataset](https://www.
 
 ## 5. Process
 
-![Analysis process](figures/olist_process_en.png)
+![Main analysis process](figures/olist_process_en_v2.png)
 
 ## 6. Key Findings
 
@@ -58,9 +59,11 @@ Of the 94,443 reviewed orders, 7,627 were classified as late: 8.1% of the sample
 
 Comparing orders by delivery duration showed that, among those taking at least 21 days, on-time arrivals averaged 3.92, while late arrivals averaged 2.30.<br />In a simple regression including total delivery days and a late indicator, the late coefficient was −1.22 points, with a 95% confidence interval of −1.27 to −1.17.<br />This supports including **the accuracy of delivery estimates** in an operational review. However, the model does not yet account for differences between products or marketplace sellers, and the data does not directly measure customers' feelings. It therefore cannot establish that a broken promise caused the lower ratings.
 
+![Review scores by delivery-duration group: on-time versus late arrivals](figures/a3_speed_vs_late_heatmap.png)
+
 ![Tableau: mean review score by arrival relative to the estimated time](figures/tableau_review_scores.png)
 
-[Open this chart in Tableau](https://public.tableau.com/views/LateordersgetlowerratingsonBrazilianE-commerceOlist_Whatstrategiesshouldbeapplied/1?:showVizHome=no). It compares average ratings across arrival-gap groups; it does not estimate a causal effect. [Additional chart: scores within delivery-duration groups](figures/a3_speed_vs_late_heatmap.png).
+[Open this chart in Tableau](https://public.tableau.com/views/LateordersgetlowerratingsonBrazilianE-commerceOlist_Whatstrategiesshouldbeapplied/1?:showVizHome=no). It compares average order ratings across arrival-gap groups.
 
 ### ② Early arrival overall does not eliminate the risk of delays in some states
 
@@ -77,25 +80,21 @@ I compared the historical 91.8th percentile of delivery duration in each state�
 | Espírito Santo (ES) | 1,942 | 11.95% | 25.0 | 26.9 | +1.8 |
 | São Paulo (SP) | 39,677 | 5.89% | 18.9 | 17.0 | −1.9 |
 
-The table is ranked by late rate; São Paulo is a reference and is not one of the top five. [See all 17 states](outputs/tableau/2_promise_by_state.csv).
+The table is ranked by late rate; São Paulo is a reference. [See all 17 states](outputs/tableau/2_promise_by_state.csv).
 
-![Tableau: difference between the historical delivery-coverage benchmark and the original estimate](figures/tableau_state_promise_gap.png)
+A high late rate does not necessarily mean a state should receive the highest priority for improvement. Maranhão has the highest late rate, 19.60%, across 699 reviewed orders, while Rio de Janeiro has a 13.41% rate across 12,072. Decisions about improving the delivery experience therefore need to consider both the late rate and the volume of affected orders.
 
-[Open this chart in Tableau](https://public.tableau.com/views/LateordersgetlowerratingsonBrazilianE-commerceOlist_Whatstrategiesshouldbeapplied/2?:showVizHome=no). The chart is ranked by the scenario's adjustment in days, rather than by late rate. A positive value means a longer estimate under the common coverage benchmark; it is not the average number of days an order arrived late.
+![Tableau: difference between the historical delivery-time benchmark and the original estimate](figures/tableau_state_promise_gap.png)
 
-A high late rate alone does not determine operational priority. Maranhão has the highest rate, 19.60%, across 699 reviewed orders, while Rio de Janeiro has a 13.41% rate across 12,072. Both the likelihood of delay and the volume of affected orders matter when deciding where to investigate first.
+[Open this chart in Tableau](https://public.tableau.com/views/LateordersgetlowerratingsonBrazilianE-commerceOlist_Whatstrategiesshouldbeapplied/2?:showVizHome=no).<br>Note: the chart is ranked by the adjustment in days to the estimated arrival time, rather than by late rate as in the table above.<br>A positive value indicates that the estimate would need to allow more time; it is not the average number of days an order arrived late.
 
-These results suggest that some states may need revised delivery estimates to avoid setting unrealistic expectations. They are historical scenarios rather than a tested replacement policy. A follow-up could track state-level late rates, review scores, and purchase conversion, rather than treating a longer estimate alone as an improvement in the delivery experience.
+These results suggest that some states may need revised delivery estimates to avoid setting unrealistic expectations.
 
-### ③ Longer-distance deliveries carry higher freight costs relative to item prices
+### ③ Five states warrant further assessment for logistics improvements
 
-In the freight analysis of 111,119 order-item records, the median freight-to-price ratio was 17.7% below 100 km and 34.9% beyond 2,000 km. A log-freight model including item weight and price had a distance-term coefficient of about 0.19 and an R² of 0.512.
+Before comparing states, I examined how freight burden varied with distance: the median freight-to-price ratio was 17.7% below 100 km and 34.9% beyond 2,000 km.
 
-![Median freight as a share of item price, grouped by estimated straight-line distance](figures/b1_freight_ratio_by_distance.png)
-
-### ④ Five states warrant further assessment for small logistics hubs
-
-Using thresholds of at least 28% median freight-to-price ratio and 1,000 order-item records, I screened 111,553 records and identified the following candidate states:
+I then screened 111,553 order-item records using two initial criteria: **a median freight-to-price ratio of at least 28% and at least 1,000 order-item records**. I chose these thresholds to consider both freight burden and observed purchase volume; they were not derived from the distance-group results. The following states met both criteria.
 
 | Candidate state | Order-item records | Median freight-to-price ratio |
 | --- | --- | --- |
@@ -107,13 +106,28 @@ Using thresholds of at least 28% median freight-to-price ratio and 1,000 order-i
 
 ![Tableau: freight burden and observed item purchases, with five hub-pilot candidates highlighted](figures/tableau_hub_candidates.png)
 
-[Open this chart in Tableau](https://public.tableau.com/views/LateordersgetlowerratingsonBrazilianE-commerceOlist_Whatstrategiesshouldbeapplied/5?:showVizHome=no). Pink points meet both screening thresholds. The vertical axis shows order-item counts on a log scale, rather than shopper conversion rates.
+[Open this chart in Tableau](https://public.tableau.com/views/LateordersgetlowerratingsonBrazilianE-commerceOlist_Whatstrategiesshouldbeapplied/5?:showVizHome=no). Pink points meet both screening thresholds. The vertical axis shows order-item counts on a log scale; the horizontal axis shows the median freight-to-price ratio.
 
-Notably, **about 71–77% of the order-item records for these five states came from sellers in São Paulo**. Testing whether small logistics hubs could reduce the cost of cross-state supply is a direction marketplace operators or sellers could investigate further.<br />Separately, in the freight-model sample, I considered 10,003 items nationwide traveling more than 1,500 km. If their freight were adjusted to the model's 1,000 km distance level, the estimated reduction would be about **R$48,003 in freight charges**: roughly 13% of freight for those distant items and 2.2% of freight across the full model sample.
+Notably, **about 71–77% of the order-item records for these five states came from sellers in São Paulo**. These states combine a relatively high freight burden with a substantial volume of purchases and a concentration of supply from outside the state. They therefore warrant further assessment of whether small logistics hubs could improve delivery conditions. Deciding whether to open a hub would also require estimates of warehousing, inventory, and transportation costs.
 
-**Note: this is not an estimate of the benefit of opening small logistics hubs in the five candidate states.** The model does not yet include rent, inventory, additional transportation, or handling costs. It can therefore only help identify directions for further costing and small-scale tests.
+[Candidate-state summary](outputs/tableau/3b_destination_states.csv)
 
-[Statistical outputs](outputs/stats.txt) · [Candidate-state summary](outputs/tableau/3b_destination_states.csv)
+<details>
+<summary>Supplement: Freight Scenario</summary>
+
+I also used the freight model to explore how much lower freight charges could save on long-distance deliveries. This scenario used the nationwide model sample, rather than only the five candidate states.
+
+I selected order-item records with delivery distances over 1,500 km, then assumed those distances fell to 1,000 km. The model estimated the change in freight charges while holding item weight and price constant. **The 1,500 km cutoff and 1,000 km comparison distance were assumptions chosen for this scenario; I have not verified whether logistics hubs could achieve them.** These distances were not derived from the 28% and 1,000-record criteria used to screen states.
+
+The distance filter returned 10,003 order-item records; this was the resulting count, rather than a sample size set in advance. Estimated freight charges fell by about **R\$48,003**, or 13% of the original freight for these long-distance items and 2.2% of total freight across all records used in the model.
+
+**This is a hypothetical scenario, not an estimate of the benefit of opening hubs in the five candidate states.** The model does not yet include rent, inventory, additional transportation, or handling costs. Assessing a hub would require comparing different distance assumptions and recalculating the results using actual candidate locations and additional costs.
+
+[Distance-group chart](figures/b1_freight_ratio_by_distance.png) · [Freight model and scenario code](python/analysis.py#L113) · [Statistical outputs](outputs/stats.txt)
+
+Model details: the log-freight regression includes distance, item weight, and item price, with robust standard errors. The distance-term coefficient is about 0.19 and R² is 0.512. The scenario applies the estimated distance adjustment to each item's observed freight charge.
+
+</details>
 
 ## 7. Challenges and Lessons
 
